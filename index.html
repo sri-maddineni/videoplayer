@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YouTube Video Player</title>
+</head>
+<body>
+  <h2 style="margin-left: 600px;">YouTube Video Player</h2>
+  <form id="videoForm">
+    <label for="videoLink" style="margin-left: 500px;">YouTube Video Link:</label>
+    <input type="text" id="videoLink" name="videoLink" placeholder="Enter YouTube video link" required>
+    <button type="button" onclick="pasteVideoLink()">Paste</button>
+    <button type="submit">Play Video</button>
+  </form>
+  
+  <script>
+    function pasteVideoLink() {
+      navigator.clipboard.readText().then(text => {
+        document.getElementById('videoLink').value = text;
+      }).catch(err => {
+        console.error('Failed to read clipboard contents: ', err);
+      });
+    }
+  </script>
+  
+  <div id="videoPlayer" style="margin: 15px;"></div>
+
+  <script>
+    function playVideo(event) {
+      event.preventDefault();
+      var videoLink = document.getElementById("videoLink").value;
+      var videoId = getVideoId(videoLink);
+      var videoPlayer = document.getElementById("videoPlayer");
+
+      if (videoId) {
+        var embedUrl = "https://www.youtube.com/embed/" + videoId;
+        videoPlayer.innerHTML = '<iframe width="1450" height="600" src="' + embedUrl + '" frameborder="0" allowfullscreen></iframe>';
+      } else {
+        videoPlayer.innerHTML = '<p>Invalid YouTube video link</p>';
+      }
+    }
+
+    function getVideoId(url) {
+      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+      var match = url.match(regExp);
+      if (match && match[7].length === 11) {
+        return match[7];
+      } else {
+        return false;
+      }
+    }
+
+    var videoForm = document.getElementById("videoForm");
+    videoForm.addEventListener("submit", playVideo);
+  </script>
+</body>
+</html>
